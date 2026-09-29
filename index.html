@@ -108,6 +108,16 @@ function heart(x,y,s,fill,a=1){
   c.bezierCurveTo(0,-.8,.1,-1,.4,-1);c.bezierCurveTo(1.1,-1,1.3,0,0,.9);
   c.fillStyle=fill;c.fill();c.restore();
 }
+function drop(x,y,r,fill,lw=0){
+  c.save();c.translate(x,y);c.scale(r,r);c.beginPath();c.moveTo(0,-1);c.bezierCurveTo(.15,-.6,.8,-.1,.8,.4);c.bezierCurveTo(.8,.9,.4,1.1,0,1.1);
+  c.bezierCurveTo(-.4,1.1,-.8,.9,-.8,.4);c.bezierCurveTo(-.8,-.1,-.15,-.6,0,-1);c.closePath();c.restore();
+  if(fill){c.fillStyle=fill;c.fill()}if(lw){c.strokeStyle=OUT;c.lineWidth=lw;c.lineJoin='round';c.stroke()}
+}
+function tube(x,y,h,liquid){
+  rr(x-5,y,10,h,5);fs('rgba(230,245,255,.85)',2.2);
+  if(liquid){c.beginPath();c.rect(x-3.2,y+h*.45,6.4,h*.5);c.fillStyle=liquid;c.fill()}
+  box(x-6,y-4,12,6,'#e5344f',2);
+}
 function star(x,y,R,rot,fill){
   c.save();c.translate(x,y);c.rotate(rot);c.beginPath();
   for(let i=0;i<8;i++){const r=i%2?R*.32:R,a=i*PI/4;c.lineTo(Math.cos(a)*r,Math.sin(a)*r)}
@@ -330,21 +340,25 @@ function house(T,open,inner){
 
 /* ===================== HÔPITAL ===================== */
 function hospital(open){
-  // ailes
-  box(640,300,215,292,'#f1f3fa',3);box(1035,300,215,292,'#f1f3fa',3);box(640,292,215,14,'#c7d0e4',3);box(1035,292,215,14,'#c7d0e4',3);
-  // tour
-  box(850,110,190,482,'#fafbff',3);box(842,102,206,16,'#c7d0e4',3);
-  for(const wx of [672,760,1063,1151])for(const wy of [335,415,495]){
-    box(wx,wy,60,52,'#b9e0f7',3);c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(wx+30,wy);c.lineTo(wx+30,wy+52);c.stroke();
-    c.fillStyle='rgba(255,255,255,.4)';c.beginPath();c.moveTo(wx,wy+52);c.lineTo(wx+22,wy);c.lineTo(wx+34,wy);c.lineTo(wx+12,wy+52);c.fill();
+  // bâtiment de plain-pied
+  box(650,342,600,250,'#eefaf8',3);box(640,332,620,16,'#2fa7b8',3);
+  // enseigne sur le toit
+  box(820,300,10,34,'#8896b3',2);box(1070,300,10,34,'#8896b3',2);
+  rr(790,190,320,112,16);fs('#fff',4);
+  drop(822,236,24,'#e5344f',3);
+  text('LABORATOIRE',984,232,30,'#23395d');
+  text('Prélèvements sanguins',960,273,21,'#d22c47');
+  // vitrines avec tubes
+  for(const wx of [684,1120]){
+    box(wx,400,116,112,'#b9e0f7',3);c.strokeStyle='#fff';c.lineWidth=4;c.beginPath();c.moveTo(wx+58,400);c.lineTo(wx+58,512);c.stroke();
+    c.fillStyle='rgba(255,255,255,.4)';c.beginPath();c.moveTo(wx,512);c.lineTo(wx+30,400);c.lineTo(wx+44,400);c.lineTo(wx+14,512);c.fill();
+    drop(wx+58,452,15,'rgba(229,52,79,.85)',2.5);
+    box(wx-8,512,132,8,'#c7d0e4',3);
   }
-  for(const wx of [872,962])for(const wy of [255,330]){box(wx,wy,60,44,'#b9e0f7',3)}
-  // enseigne
-  rr(872,132,146,84,12);fs('#fff',4);
-  c.fillStyle='#e5344f';c.fillRect(939,140,12,34);c.fillRect(928,151,34,12);
-  text('HÔPITAL',945,195,24,'#23395d');
+  for(const wx of [680,1176])box(wx,536,16,0,'#000',0);
   // marquise + portes
-  rr(860,392,180,24,8);fs('#e5344f',3);
+  rr(860,392,180,24,8);fs('#2fa7b8',3);
+  for(let k=0;k<6;k++){c.fillStyle=k%2?'#fff':'rgba(255,255,255,.35)';c.fillRect(866+k*28,394,26,20)}
   box(884,418,132,174,'#2b3a5c',3);
   const g=c.createLinearGradient(0,420,0,590);g.addColorStop(0,'#fff8e0');g.addColorStop(1,'#ffe9b0');c.fillStyle=g;c.fillRect(890,422,120,170);
   const o=eIO(open)*56;
@@ -355,7 +369,7 @@ function hospital(open){
   }
   c.restore();
   box(872,590,156,9,'#c7d0e4',3);
-  circ(920,405,0,'#000',0);
+  circ(680,586,14,'#4fae68',3);circ(1220,586,14,'#4fae68',3);
 }
 
 /* ===================== VOITURE ===================== */
@@ -575,10 +589,12 @@ function patState(i,lt){
 function bed(bx,by,P,st,T,i){
   c.save();c.translate(bx,by);
   const breath=Math.sin(T*1.6+i)*1.2;
-  circ(-100,-9,9,'#556',2.5);circ(100,-9,9,'#556',2.5);
-  box(-126,-128,14,98,'#9db2c9',3);
-  box(-112,-62,226,18,'#b8c8da',3);box(-108,-88,220,28,'#fff',3);
-  ell(-78,-95,33,11,'#fff',3);
+  // fauteuil de prélèvement
+  box(-46,-22,92,12,'#8896b3',3);box(-9,-72,18,52,'#b8c8da',3);
+  rr(-112,-132,64,58,16);fs('#2fa7b8',3);
+  rr(-108,-94,222,28,14);fs('#3cc0d1',3);
+  rr(92,-100,30,20,8);fs('#2fa7b8',3);
+  ell(-78,-95,33,11,'#7fd8e3',3);
   // tête
   const hr=P.kid?19:23,hy=P.kid?-108:-113;
   circ(-78,hy,hr,P.skin,3);
@@ -607,12 +623,13 @@ function bed(bx,by,P,st,T,i){
   c.bezierCurveTo(-8,-114-hb+breath,20,-116-hb+breath,46,-108);c.bezierCurveTo(70,-102,90,-108,108,-98);c.lineTo(108,-84);c.closePath();fs(P.blanket,3);
   c.strokeStyle='rgba(255,255,255,.4)';c.lineWidth=4;c.beginPath();c.moveTo(-56,-96);c.bezierCurveTo(-30,-102,20,-108-hb*.8,108,-88);c.stroke();
   if(P.teddy){circ(70,-104,11,'#b9825a',2.5);circ(70,-122,9,'#b9825a',2.5);circ(63,-130,4,'#b9825a',2);circ(77,-130,4,'#b9825a',2);circ(71,-120,3.5,'#f0d3b0',1.5);circ(68,-124,1.2,OUT,0);circ(74,-124,1.2,OUT,0)}
+  // accoudoir
+  rr(-58,-113,96,11,5);fs('#1f8b9b',2.5);c.strokeStyle=OUT;c.lineWidth=3;c.beginPath();c.moveTo(-8,-102);c.lineTo(-8,-72);c.stroke();
   // bras
   c.save();c.translate(-48,-118);c.rotate(-.5*st.jerk);c.translate(48,118);
   limb([[-50,-119],[-28,-120]],15,P.gown);limb([[-28,-120],[10,-118]],12,P.skin);ell(16,-117,7,6,P.skin,2.5);
   if(st.bite>0){circ(-8,-124.5,3*st.bite,'#e02a4a',0);c.strokeStyle='rgba(224,42,74,.45)';c.lineWidth=2;c.beginPath();c.arc(-8,-124.5,5.5*st.bite,0,TAU);c.stroke()}
   c.restore();
-  box(108,-108,10,72,'#9db2c9',3);
   c.restore();
   if(ouch<.2){
     for(let k=0;k<3;k++){const a=((T*.45+k*.33)%1);c.save();c.globalAlpha=Math.sin(a*PI)*.9;
@@ -642,9 +659,10 @@ function ward(lt,T,h){
   c.lineCap='round';c.lineWidth=5;c.beginPath();c.moveTo(330,190);c.lineTo(330+Math.cos(hh)*22,190+Math.sin(hh)*22);c.stroke();
   c.lineWidth=3;c.beginPath();c.moveTo(330,190);c.lineTo(330+Math.cos(mm)*33,190+Math.sin(mm)*33);c.stroke();circ(330,190,4,'#e5344f',0);
   // affiche
-  rr(900,120,130,168,10);fs('#fff',4);c.fillStyle='#e5344f';c.fillRect(950,140,30,84);c.fillRect(923,167,84,30);
-  text('Soins',965,254,22,'#23395d');
-  rr(1100,110,100,40,10);fs('#fff',3);text('Ch. 12',1150,131,22,'#23395d');
+  rr(900,120,130,168,10);fs('#fff',4);drop(965,180,46,'#e5344f',3);
+  text('Prélèvements',965,256,15,'#23395d');
+  rr(1090,96,130,150,10);fs('#e9f3f9',3);c.fillStyle='#8896b3';c.fillRect(1100,170,110,6);c.fillRect(1100,236,110,6);
+  for(let k=0;k<5;k++){tube(1112+k*22,138,32,['#e5344f','#f2a03d','#4fb8e6','#e5344f','#59c37a'][k]);tube(1112+k*22,204,32,['#e5344f','#e5344f','#f2a03d','#4fb8e6','#e5344f'][k])}
   // sol
   g=c.createLinearGradient(0,590,0,H);g.addColorStop(0,'#efe4cf');g.addColorStop(1,'#d8c9ad');c.fillStyle=g;c.fillRect(0,590,W,H-590);
   c.strokeStyle='rgba(120,90,50,.18)';c.lineWidth=2;
@@ -871,7 +889,7 @@ const SCENES=[
   {id:'D',s:S.D,d:D.D,fn:sceneD},{id:'E',s:S.E,d:D.E,fn:sceneE}
 ];
 const CAPS=[
-  ['A',.8,4.4,'Ce matin, direction l\'hôpital…'],['B',.9,3.3,'Une journée comme les autres ?'],
+  ['A',.8,4.4,'Ce matin, direction le labo…'],['B',.9,3.3,'Une journée comme les autres ?'],
   ['C',6.7,9.2,'Mode moustique : activé !'],['C',18.5,21,'Elle pique. Elle encaisse.'],
   ['D',.9,4,'Journée terminée !'],['E',.9,3.6,'Et retour à la maison…']
 ];
