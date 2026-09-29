@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Une journée d'infirmière… piquante</title>
-<meta name="description" content="Une infirmière part au travail, se transforme en moustique, pique ses patients et rentre faire un bisou à son mari.">
+<title>La vraie vie de Charlène</title>
+<meta name="description" content="Une journée ordinaire, vue de près… ou presque.">
 <meta name="theme-color" content="#120c26">
-<meta property="og:title" content="Une journée d'infirmière… piquante">
-<meta property="og:description" content="Dessin animé : infirmière le jour, moustique au boulot, amoureuse le soir.">
+<meta property="og:title" content="La vraie vie de Charlène">
+<meta property="og:description" content="Une journée ordinaire, vue de près… ou presque.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🦟%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E❤️%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@ h1 em{font-style:normal;color:var(--pink)}
 </style>
 </head>
 <body>
-<div id="stage"><canvas id="cv" width="1280" height="720" aria-label="Dessin animé : une infirmière se transforme en moustique au travail"></canvas></div>
+<div id="stage"><canvas id="cv" width="1280" height="720" aria-label="Dessin animé : la vraie vie de Charlène"></canvas></div>
 <div id="rot">📱 Astuce : tourne ton téléphone à l'horizontale</div>
 <div class="ctrl" id="ctrl">
   <button id="bPause" title="Pause">⏸</button>
@@ -54,9 +54,9 @@ h1 em{font-style:normal;color:var(--pink)}
 <button class="btn" id="again">↺ Rejouer</button>
 <div class="overlay" id="start">
   <div class="card">
-    <div class="mos">🦟</div>
-    <h1>Une journée d'infirmière… <em>piquante</em></h1>
-    <p>Elle part au travail le matin, se transforme, gagne sa vie à sa façon, puis rentre retrouver son mari.</p>
+    <div class="mos">🩺</div>
+    <h1 id="ttl">La vraie vie de <em>Charlène</em></h1>
+    <p>Une journée ordinaire, vue de près… ou presque.</p>
     <button class="btn" id="go">▶ Lancer l'histoire</button>
     <small>🔊 Avec le son, c'est mieux</small>
   </div>
@@ -134,7 +134,7 @@ function bubble(x,y,str,p,o={}){
 }
 
 /* ===================== CHRONOLOGIE ===================== */
-const D={A:10.5,B:8.4,C:38,D:8,E:15.5};
+const D={A:10.5,B:8.4,C:38,D:8,E:27};
 const S={A:0};S.B=S.A+D.A;S.C=S.B+D.B;S.D=S.C+D.C;S.E=S.D+D.D;
 const TOTAL=S.E+D.E;
 function hourAt(T){
@@ -142,7 +142,7 @@ function hourAt(T){
   if(T<S.C)return lerp(7.92,8.0,(T-S.B)/D.B);
   if(T<S.D)return 8+10*seg(T-S.C,6.8,30);
   if(T<S.E)return lerp(18.05,18.3,(T-S.D)/D.D);
-  return lerp(18.8,19.4,(T-S.E)/D.E);
+  return lerp(18.8,19.7,(T-S.E)/D.E);
 }
 /* Cycle « piqûre » (relatif au début de la scène C) */
 const CYC0=7.0,PER=5.5;
@@ -189,10 +189,13 @@ const SFX={
   ouch(){tone(950,.28,'triangle',.09,0,480)},
   ding(){tone(1046,.16,'sine',.09);tone(1568,.5,'sine',.07,.13)},
   mwah(){noise(.09,4500,1500,.25,'highpass');tone(1300,.14,'sine',.09,0,520)},
+  click(){tone(300,.05,'square',.08);tone(180,.08,'square',.06,.05)},
+  rumble(){noise(2.8,220,50,.35)},
+  burst(){noise(.5,3000,300,.25);[523,659,784,1047,1319,1568].forEach((f,i)=>tone(f,.4,'triangle',.06,i*.07))},
   jingle(){[523,659,784,1047].forEach((f,i)=>tone(f,.35,'triangle',.08,i*.13));[523,659,784,1047].forEach(f=>tone(f,.9,'triangle',.05,.6))}
 };
 const EV=[];const ev=(t,n)=>EV.push({t,n});
-ev(S.B+6.4,'ding');ev(S.C+5.2+.55*1.4,'pouf');ev(S.C+30.6+.55*1.4,'pouf');ev(S.D+.5,'ding');ev(S.E+10.55,'mwah');ev(S.E+12.6,'jingle');
+ev(S.B+6.4,'ding');ev(S.C+5.2+.55*1.4,'pouf');ev(S.C+30.6+.55*1.4,'pouf');ev(S.D+.5,'ding');ev(S.E+10.55,'mwah');ev(S.E+15.5,'click');ev(S.E+16.4,'rumble');ev(S.E+19,'burst');ev(S.E+22.8,'jingle');
 CFG.amounts.forEach((_,i)=>{ev(S.C+CYC0+PER*i+3.95,'ouch');ev(ARR[i],'coin')});
 const CHORDS=[[130.81,[261.63,329.63,392]],[110,[261.63,329.63,440]],[87.31,[261.63,349.23,440]],[98,[246.94,293.66,392]]];
 function musicTick(playing){
@@ -214,7 +217,9 @@ function skyCols(h){
   return[mixc(a[1],b[1],t),mixc(a[2],b[2],t)];
 }
 const nightOf=h=>seg(h,18.7,19.7);
-let NIGHT=0;
+let NIGHT=0,LIT=1;
+function hexmix(a,b,t){const A=rgb(a),B=rgb(b);return '#'+[0,1,2].map(i=>Math.round(A[i]+(B[i]-A[i])*t).toString(16).padStart(2,'0')).join('')}
+const glass=(day,lit,off)=>hexmix(hexmix(day,lit,NIGHT),off,NIGHT*(1-LIT));
 const sunsetOf=h=>Math.max(0,1-Math.abs(h-18.4)/.9);
 function cloud(x,y,s,col){
   c.save();c.translate(x,y);c.scale(s,s);c.fillStyle=col;c.beginPath();
@@ -277,7 +282,7 @@ function tint(h){
   GL.length=0;
 }
 function glowRect(x,y,w,h){
-  GL.push(n=>{if(n<=.02)return;c.save();c.globalCompositeOperation='lighter';c.globalAlpha=n*.5;
+  GL.push(n=>{n*=LIT;if(n<=.02)return;c.save();c.globalCompositeOperation='lighter';c.globalAlpha=n*.5;
     const g=c.createRadialGradient(x+w/2,y+h/2,4,x+w/2,y+h/2,Math.max(w,h)*1.2);
     g.addColorStop(0,'rgba(255,200,90,.55)');g.addColorStop(1,'rgba(255,200,90,0)');c.fillStyle=g;c.fillRect(x-w,y-h,w*3,h*3);
     c.fillStyle='rgba(255,190,80,.35)';c.fillRect(x,y,w,h);c.restore()});
@@ -286,7 +291,7 @@ function glowRect(x,y,w,h){
 /* ===================== MAISON ===================== */
 function win(x,y,w,h,glow){
   rr(x-6,y-6,w+12,h+12,8);fs('#fff',3);
-  const g=c.createLinearGradient(x,y,x+w,y+h);g.addColorStop(0,mixc('#c9e9ff','#ffe9a8',NIGHT));g.addColorStop(1,mixc('#eaf7ff','#ffd06a',NIGHT));
+  const g=c.createLinearGradient(x,y,x+w,y+h);g.addColorStop(0,glass('#c9e9ff','#ffe9a8','#39456f'));g.addColorStop(1,glass('#eaf7ff','#ffd06a','#2b3560'));
   c.fillStyle=g;c.fillRect(x,y,w,h);
   c.strokeStyle='#fff';c.lineWidth=4;c.beginPath();c.moveTo(x+w/2,y);c.lineTo(x+w/2,y+h);c.moveTo(x,y+h/2);c.lineTo(x+w,y+h/2);c.stroke();
   c.strokeStyle=OUT;c.lineWidth=2;c.strokeRect(x,y,w,h);
@@ -304,7 +309,7 @@ function house(T,open,inner){
   // toit
   c.beginPath();c.moveTo(24,358);c.lineTo(265,208);c.lineTo(506,358);c.closePath();fs('#cf4a44',4);
   c.strokeStyle='rgba(0,0,0,.14)';c.lineWidth=3;for(let i=1;i<4;i++){c.beginPath();c.moveTo(24+i*20,358-i*13);c.lineTo(506-i*20,358-i*13);c.stroke()}
-  circ(265,296,24,'#fff',3);circ(265,296,17,mixc('#cfe9ff','#ffdf8a',NIGHT),2);
+  circ(265,296,24,'#fff',3);circ(265,296,17,glass('#cfe9ff','#ffdf8a','#39456f'),2);
   c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(248,296);c.lineTo(282,296);c.moveTo(265,279);c.lineTo(265,313);c.stroke();
   glowRect(248,279,34,34);
   win(100,410,100,84,true);win(392,410,60,84,true);
@@ -786,37 +791,78 @@ function hearts(lt,a,x,y){
     heart(x+(rnd(i)-.5)*90+Math.sin(u*6+i)*14,y-u*170,7+rnd(i+9)*9,i%3?'#ff5d8f':'#e5344f',1-eI(u));
   }
 }
+function sperm(x,y,ang,sz,t,ph,al){
+  c.save();c.translate(x,y);c.rotate(ang);c.globalAlpha*=al;c.lineCap='round';c.lineJoin='round';
+  const pts=[];for(let k=0;k<=10;k++)pts.push([-8*sz-k*3.6*sz,Math.sin(t*15+ph-k*.7)*(1.5+k*.75)*sz]);
+  for(const [col,w] of [[OUT,5.5*sz+2],['#ff7fb2',3.4*sz]]){
+    c.strokeStyle=col;c.lineWidth=w;c.beginPath();c.moveTo(pts[0][0],pts[0][1]);for(const q of pts)c.lineTo(q[0],q[1]);c.stroke();
+  }
+  ell(0,0,11*sz,8*sz,'#ff9cc6',2.5);
+  c.fillStyle='rgba(255,255,255,.55)';c.beginPath();c.ellipse(-1*sz,-3.5*sz,5*sz,1.8*sz,0,0,TAU);c.fill();
+  circ(3.5*sz,-1.5*sz,2.4*sz,'#fff',0);circ(4.2*sz,-1.5*sz,1.2*sz,OUT,0);
+  c.strokeStyle=OUT;c.lineWidth=1.4;c.beginPath();c.arc(4*sz,2*sz,2.6*sz,.2,PI-.2);c.stroke();
+  c.restore();
+}
+const WIN={x:422,y:452},NCELLS=80;
+function cells(lt,T){
+  for(let i=0;i<NCELLS;i++){
+    const age=lt-(19+i*.033);if(age<0||age>5.5)continue;
+    const a=rnd(i)*TAU,v=260+rnd(i+30)*380,tau=1.4,d=v*tau*(1-Math.exp(-age/tau));
+    const x=WIN.x+Math.cos(a)*d+Math.sin(age*4+i)*12,y=WIN.y+Math.sin(a)*d-28*age+Math.cos(age*3+i)*8;
+    const vx=Math.cos(a)*v*Math.exp(-age/tau),vy=Math.sin(a)*v*Math.exp(-age/tau)-28;
+    sperm(x,y,Math.atan2(vy,vx)+Math.sin(T*9+i)*.25,1.1+rnd(i+60)*.7,T,i,Math.min(1,age*8)*(1-seg(age,4.6,5.5)));
+  }
+}
 function sceneE(lt,T){
   const h=hourAt(T);
-  const k=eIO(seg(lt,9.3,10.5));
+  LIT=1-eIO(seg(lt,15.5,15.8));
+  const k=eIO(seg(lt,9.3,10.5))*(1-eIO(seg(lt,12.6,13.6)));
   c.save();
   c.translate(lerp(350,640,k),lerp(500,440,k));const z=1+.9*k;c.scale(z,z);c.translate(-350,-500);
   exterior(T,h,[540,600,1130,1215]);
-  const open=eIO(seg(lt,5.4,6));
-  const kiss=eIO(seg(lt,10,10.6)),tal=lt>6.3&&lt<8.3;
-  house(T,open,()=>human({kind:'husband',x:322,y:590,s:1.08,f:1,arm:lt<8.6?'wave':'rest',t:T,eyes:'happy',mouth:tal?'talk':'smile',lean:.12*kiss,hx:5*kiss,blush:kiss}));
+  const open=eIO(seg(lt,5.4,6))*(1-eIO(seg(lt,14.4,15)));
+  const kiss=eIO(seg(lt,10,10.6))*(1-eIO(seg(lt,12.3,12.7))),tal=lt>6.3&&lt<8.3;
+  // la maison tremble
+  const amp=seg(lt,16.4,19)*7+(lt>=19?2.5*(1-seg(lt,19,21.8)):0);
+  c.save();c.translate(Math.sin(T*70)*amp,Math.cos(T*63)*amp*.6);
+  const hx=lerp(322,302,eIO(seg(lt,12.8,13.6)));
+  house(T,open,()=>{if(lt<13.9)human({kind:'husband',x:hx,y:590,s:1.08,f:lt>12.8?-1:1,walk:lt>12.8&&lt<13.6?1:0,ph:(322-hx)*TAU/100,a:1-seg(lt,13.3,13.8),
+    arm:lt<8.6?'wave':'rest',t:T,eyes:'happy',mouth:tal?'talk':'smile',lean:.12*kiss,hx:5*kiss,blush:kiss})});
+  c.restore();
   const xOf=t=>t<.7?1500:lerp(1500,790,eO(seg(t,.7,4))),cx=xOf(lt),mv=lt>.7&&lt<4;
-  const p=seg(lt,4.2,7.4),nx=lerp(760,378,p),ny=lerp(628,598,eIO(seg(p,.72,1)));
-  if(lt>4.2)human({kind:'nurse',x:nx,y:ny,f:-1,ph:(nx-760)*TAU/100,walk:p<1?1:0,a:seg(lt,4.2,4.45),t:T,eyes:kiss>.5?'happy':'open',
-    mouth:kiss>.5?'kiss':(lt>8&&lt<9.9?'talk':'smile'),lean:.2*kiss,hx:5*kiss,blush:kiss,lift:Math.max(0,Math.sin(seg(lt,4.2,4.6)*PI))*12+14*kiss});
+  // l'infirmière rejoint la porte après le bisou
+  const p=seg(lt,4.2,7.4),g=eIO(seg(lt,12.9,13.9));
+  const nx=lt<12.9?lerp(760,378,p):lerp(378,346,g),ny=lt<12.9?lerp(628,598,eIO(seg(p,.72,1))):lerp(598,592,g);
+  const walking=(lt<12.9&&p<1)||(lt>=12.9&&g<1);
+  if(lt>4.2&&lt<14.3)human({kind:'nurse',x:nx,y:ny,f:-1,ph:(nx-760)*TAU/100,walk:walking?1:0,a:seg(lt,4.2,4.45)*(1-seg(lt,13.7,14.2)),t:T,eyes:kiss>.5?'happy':'open',
+    mouth:kiss>.5?'kiss':(lt>8&&lt<9.9?'talk':'smile'),lean:.2*kiss,hx:5*kiss,blush:kiss,lift:(lt<5?Math.max(0,Math.sin(seg(lt,4.2,4.6)*PI))*12:0)+14*kiss});
   car({x:cx,y:706,dir:-1,rot:(cx-1500)/26,nurse:lt<4.1,brake:lt>3&&lt<4.3,bounce:mv?Math.abs(Math.sin(T*22))*1.4:0,lights:true,T});
   exhaust(xOf,706,-1,.7,4,lt);
   AS.engine=mv?.3+.6*(1-seg(lt,2.6,4)):0;
   tint(h);
+  // lueur rose derrière la fenêtre, de plus en plus forte
+  const gl=seg(lt,17.2,19)*(1-seg(lt,21.5,23));
+  if(gl>0){c.save();c.globalCompositeOperation='lighter';const r=60+50*gl+18*Math.sin(T*25)*gl;
+    const g2=c.createRadialGradient(WIN.x,WIN.y,4,WIN.x,WIN.y,r);g2.addColorStop(0,`rgba(255,120,190,${.75*gl})`);g2.addColorStop(1,'rgba(255,120,190,0)');
+    c.fillStyle=g2;c.fillRect(WIN.x-r,WIN.y-r,r*2,r*2);c.restore()}
+  const fl=1-seg(lt,19,19.6);
+  if(fl>0&&lt>=19){c.save();c.globalCompositeOperation='lighter';const r=40+260*(1-fl);const g3=c.createRadialGradient(WIN.x,WIN.y,0,WIN.x,WIN.y,r);
+    g3.addColorStop(0,`rgba(255,255,255,${fl})`);g3.addColorStop(.4,`rgba(255,150,200,${.6*fl})`);g3.addColorStop(1,'rgba(255,150,200,0)');c.fillStyle=g3;c.fillRect(WIN.x-r,WIN.y-r,r*2,r*2);c.restore()}
+  if(lt>=19)cells(lt,T);
   bubble(324,428,'Ta journée, ma chérie ?',pop(lt,6.3,8.3),{fs:24});
   bubble(384,436,'Piquante… euh, parfaite !',pop(lt,8.1,9.9),{fs:24});
-  if(lt>10.4){hearts(lt,10.5,352,440);const p2=pop(lt,10.5,12.3);c.save();c.translate(352,372);c.rotate(-.08);c.scale(p2,p2);text('MWAH !',0,0,36,'#ff5d8f',{stroke:'#fff',sw:8});c.restore()}
+  if(lt>10.4&&lt<13.6){hearts(lt,10.5,352,440);const p2=pop(lt,10.5,12.3);c.save();c.translate(352,372);c.rotate(-.08);c.scale(p2,p2);text('MWAH !',0,0,36,'#ff5d8f',{stroke:'#fff',sw:8});c.restore()}
   c.restore();
   // écran de fin
-  const e=seg(lt,12.9,14.2);
+  const e=seg(lt,22.8,24.2);
   if(e>0){
     c.fillStyle=`rgba(18,10,40,${.62*e})`;c.fillRect(0,0,W,H);
     c.save();c.globalAlpha=e;
     heart(W/2,236,62+Math.sin(T*5)*3,'#ff5d8f');
     text('FIN',W/2,352,74,'#fff',{stroke:OUT,sw:10});
     text('Salaire du jour : '+moneyAt(T)+' €',W/2,428,36,'#ffd23f',{stroke:OUT,sw:7});
-    text('et un bisou en prime.',W/2,472,26,'#fff',{});
-    if(CFG.to)text('Une histoire pour '+CFG.to,W/2,514,22,'#ffb3cd',{});
+    text('…et la soirée ne fait que commencer.',W/2,474,26,'#fff',{});
+    text('La vraie vie de '+(CFG.to||'Charlène'),W/2,520,24,'#ffb3cd',{});
     c.restore();
   }
 }
@@ -861,7 +907,7 @@ function fit(){
 }
 function render(t){
   c.setTransform(K,0,0,K,0,0);
-  GL.length=0;AS.engine=0;AS.buzz=0;AS.belly=0;
+  LIT=1;GL.length=0;AS.engine=0;AS.buzz=0;AS.belly=0;
   let sc=SCENES[0];for(const s of SCENES)if(t>=s.s)sc=s;
   const lt=t-sc.s;
   c.save();c.beginPath();c.rect(0,0,W,H);c.clip();sc.fn(lt,t);c.restore();
@@ -903,6 +949,7 @@ fit();
 const q=new URLSearchParams(location.search);
 if(q.has('t')){T=clamp(parseFloat(q.get('t'))||0,0,TOTAL);el('start').style.display='none';el('ctrl').style.display='flex';started=true;playing=false}
 window.__setT=v=>{T=v;render(T)};
+if(CFG.to){el('ttl').innerHTML='La vraie vie de <em></em>';el('ttl').lastChild.textContent=CFG.to}
 if(document.fonts&&document.fonts.load)document.fonts.load('700 24px Fredoka').catch(()=>{});
 requestAnimationFrame(t=>{last=t;frame(t)});
 })();
